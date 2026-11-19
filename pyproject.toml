@@ -9,5 +9,8 @@ description = "Small library used to test tool.py.lib.ci from another repository
 requires-python = ">=3.12"
 dependencies = ["packaging>=23"]
 
+[project.scripts]
+tool-py-lib-ci-test-command = "tool_py_lib_ci_test_library:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
