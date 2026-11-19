@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-19 — tool.py.lib.ci 0.1.2
+
+- pin tool.py.lib.ci 0.1.2 at commit 9045367540102ba2208c517e45a52ddad4bb60ea;
+- prove an installed console script is visible during the library test command;
+- retain the existing build/install/test failure checks.
+
+
 ## 2026-11-19
 
 - add the sample Python library;

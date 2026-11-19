@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pathlib
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -14,7 +15,7 @@ import tool_py_lib_ci_test_library
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-TOOL_SHA = "414db795c757af5c4f9eaff7f6fd65f27870d7d1"
+TOOL_SHA = "9045367540102ba2208c517e45a52ddad4bb60ea"
 TOOL_ROOT = ROOT / ".tool-py-lib-ci"
 TOOL_SCRIPT = TOOL_ROOT / "scripts" / "library_ci.py"
 
@@ -105,6 +106,9 @@ class ReleasedToolTests(unittest.TestCase):
         self.assertFalse(source.is_relative_to(ROOT))
         self.assertEqual(tool_py_lib_ci_test_library.VALUE, "installed-wheel")
         self.assertTrue(packaging.__version__)
+        self.assertIsNotNone(
+            shutil.which("tool-py-lib-ci-test-command")
+        )
 
     def test_exact_released_tool_commit(self):
         self.assertTrue(TOOL_ROOT.is_dir())
