@@ -59,3 +59,13 @@ When all checks pass:
 - document the tested tool version/commit in README;
 - remove completed plan sections;
 - update the first library repository to the exact tested release.
+
+## Open issue assessment — 2026-11-19
+
+| Issue | Status | Assessment |
+| --- | --- | --- |
+| #3 Test tool.py.lib.ci 0.1.1 from another repository | now | Current repository task. Build the small synthetic library, pin exact released tool commit, run the real external reusable workflow and prove the documented success/failure/boundary behavior. |
+
+This repository must stay small. If #3 exposes missing generic behavior, fix and
+release `tool.py.lib.ci`; do not implement a workaround here.
+
