@@ -45,3 +45,12 @@ The synthetic repository must prove:
 - `docs/requirements.md` — external test contract.
 - `docs/design.md` — test-repository structure.
 - `docs/plan.md` — current unfinished work only.
+
+## Version under test
+
+This repository currently tests:
+
+- tool.py.lib.ci 0.1.1
+- commit `414db795c757af5c4f9eaff7f6fd65f27870d7d1`
+
+The workflow uses that exact commit, not a moving branch.

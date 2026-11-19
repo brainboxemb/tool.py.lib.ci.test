@@ -1,0 +1,15 @@
+name: Test released Python library CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  library:
+    uses: brainboxemb/tool.py.lib.ci/.github/workflows/reusable-ci.yml@414db795c757af5c4f9eaff7f6fd65f27870d7d1
+    with:
+      python_version: "3.12"
