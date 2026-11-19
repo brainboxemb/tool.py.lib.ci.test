@@ -2,4 +2,4 @@
 
 ## Unreleased
 
-Initial black-box acceptance repository bootstrap.
+Initial external test repository bootstrap.

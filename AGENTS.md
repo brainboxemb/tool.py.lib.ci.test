@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`tool.py.lib.ci.test` is the permanent black-box acceptance repository for one
+`tool.py.lib.ci.test` is the external test repository for one
 exact released `tool.py.lib.ci` revision.
 
 ## Released-tool rule
@@ -15,12 +15,12 @@ Never follow moving `main`.
 
 Do not implement or patch generic Python-library CI behavior here.
 
-If acceptance reveals missing generic behavior, fix it in
+If test reveals missing generic behavior, fix it in
 `tool.py.lib.ci`, release it, then update the exact pin here.
 
-## Synthetic consumer
+## Synthetic repository
 
-Keep the consumer deliberately small and domain-neutral.
+Keep the repository deliberately small and domain-neutral.
 
 Do not add Forge, SolidCraft, CAD or real application logic.
 
@@ -28,7 +28,7 @@ The synthetic package exists only to prove the public CI contract.
 
 ## Forbidden behavior
 
-Acceptance must fail if the released tool introduces:
+Test must fail if the released tool introduces:
 
 - SCons;
 - CAD-CI state;
@@ -45,6 +45,6 @@ Remove completed sections after the accepted release is proven.
 
 Use literal engineering language.
 
-Each acceptance check should identify the public contract it proves.
+Each test check should identify the public contract it proves.
 
 Keep one logical change per branch/PR and prefer squash merges.

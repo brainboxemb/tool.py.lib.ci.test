@@ -2,7 +2,7 @@
 
 This file contains only current unfinished work for `tool.py.lib.ci.test`.
 
-## 1. Build the synthetic consumer
+## 1. Build the sample library
 
 Add one minimal Python package with:
 
@@ -19,7 +19,7 @@ After `tool.py.lib.ci` 0.1.0 is released:
 - record its exact release commit in one dependency manifest;
 - bootstrap/use only that exact revision.
 
-Do not point acceptance at moving `main`.
+Do not point test at moving `main`.
 
 ## 3. Prove the external reusable workflow
 
@@ -30,13 +30,13 @@ Verify:
 - wheel build;
 - dependency installation;
 - installed-wheel tests;
-- exact consumer behavior.
+- exact repository behavior.
 
-## 4. Add negative black-box cases
+## 4. Add negative external cases
 
 Prove:
 
-- consumer test failure;
+- repository test failure;
 - package build failure;
 - dependency/install failure.
 
@@ -58,4 +58,4 @@ When all checks pass:
 
 - document the accepted tool version/commit in README;
 - remove completed plan sections;
-- notify the first consumer repository that the exact release is ready to pin.
+- notify the first repository repository that the exact release is ready to pin.
