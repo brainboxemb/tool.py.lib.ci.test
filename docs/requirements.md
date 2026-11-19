@@ -1,20 +1,20 @@
-# Python library CI black-box acceptance requirements
+# Python library CI external test requirements
 
 This repository validates one exact released `tool.py.lib.ci` revision from
 outside the tool repository.
 
 ## 1. Exact released pin
 
-Acceptance uses one exact released tool commit.
+Test uses one exact released tool commit.
 
-Moving branches are not valid acceptance dependencies.
+Moving branches are not valid test dependencies.
 
 ## 2. External reusable workflow
 
 The repository must call the released public reusable workflow exactly as a
-normal consumer repository would.
+normal repository repository would.
 
-Acceptance fails if the public workflow cannot be called externally.
+Test fails if the public workflow cannot be called externally.
 
 ## 3. Synthetic Python library
 
@@ -32,15 +32,15 @@ The package contains no CAD/domain behavior.
 
 The released tool must build exactly one wheel for the synthetic package.
 
-Acceptance verifies the reported/generated wheel belongs to the synthetic
-consumer.
+Test verifies the reported/generated wheel belongs to the synthetic
+repository.
 
 ## 5. Clean installation proof
 
 The workflow must install the wheel and its declared dependency in a clean
 environment.
 
-Acceptance must not rely on the dependency being preinstalled globally.
+Test must not rely on the dependency being preinstalled globally.
 
 ## 6. Installed-package import proof
 
@@ -54,24 +54,24 @@ workflow.
 
 ## 8. Failure propagation
 
-Acceptance must also prove, without making normal main CI intentionally red,
+Test must also prove, without making normal main CI intentionally red,
 that the released tool reports:
 
-- consumer test failure as failure;
+- repository test failure as failure;
 - package build failure as failure;
 - package/dependency install failure as failure.
 
-These failure cases may be exercised by an acceptance harness against
+These failure cases may be exercised by an test harness against
 disposable synthetic copies.
 
 ## 9. No SCons
 
-Acceptance fails if the released public path invokes SCons or creates SCons
+Test fails if the released public path invokes SCons or creates SCons
 state.
 
 ## 10. No CAD-CI
 
-Acceptance fails if it creates or consumes:
+Test fails if it creates or consumes:
 
 - `.cad-ci`;
 - `.cache/cad-ci`;
@@ -82,7 +82,7 @@ Acceptance fails if it creates or consumes:
 The released public workflow must contain no `actions/cache` restore/save
 steps in the initial accepted version.
 
-## 12. Consumer-ready rule
+## 12. Repository-ready rule
 
-A released `tool.py.lib.ci` revision is consumer-ready only when all black-box
-acceptance checks pass here.
+A released `tool.py.lib.ci` revision is ready to use only when all external
+test checks pass here.
