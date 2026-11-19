@@ -1,0 +1,178 @@
+"""Tests run through the released tool.py.lib.ci workflow."""
+
+from __future__ import annotations
+
+import pathlib
+import subprocess
+import sys
+import tempfile
+import textwrap
+import unittest
+
+import packaging
+import tool_py_lib_ci_test_library
+
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+TOOL_SHA = "414db795c757af5c4f9eaff7f6fd65f27870d7d1"
+TOOL_ROOT = ROOT / ".tool-py-lib-ci"
+TOOL_SCRIPT = TOOL_ROOT / "scripts" / "library_ci.py"
+
+
+def write_library(
+    root: pathlib.Path,
+    *,
+    name: str,
+    dependency: str | None = None,
+    failing_test: bool = False,
+) -> pathlib.Path:
+    """Create one disposable Python library for a failure-path test."""
+
+    package = name.replace("-", "_")
+    repo = root / name
+    (repo / "src" / package).mkdir(parents=True)
+    (repo / "tests").mkdir()
+    dependencies = [] if dependency is None else [dependency]
+    (repo / "pyproject.toml").write_text(
+        textwrap.dedent(
+            f"""
+            [build-system]
+            requires = ["setuptools>=68", "wheel"]
+            build-backend = "setuptools.build_meta"
+
+            [project]
+            name = "{name}"
+            version = "0.1.0"
+            dependencies = {dependencies!r}
+
+            [tool.setuptools.packages.find]
+            where = ["src"]
+            """
+        ).strip()
+        + "\n",
+        encoding="utf-8",
+    )
+    (repo / "src" / package / "__init__.py").write_text(
+        'VALUE = "ok"\n',
+        encoding="utf-8",
+    )
+    assertion = "self.fail('expected test failure')" if failing_test else (
+        f"self.assertEqual({package}.VALUE, 'ok')"
+    )
+    (repo / "tests" / "test_package.py").write_text(
+        textwrap.dedent(
+            f"""
+            import unittest
+            import {package}
+
+
+            class PackageTests(unittest.TestCase):
+                def test_package(self):
+                    {assertion}
+
+
+            if __name__ == "__main__":
+                unittest.main()
+            """
+        ).strip()
+        + "\n",
+        encoding="utf-8",
+    )
+    return repo
+
+
+class ReleasedToolTests(unittest.TestCase):
+    def run_tool(self, repo: pathlib.Path, work: pathlib.Path) -> subprocess.CompletedProcess:
+        """Run the exact released package-CI script."""
+
+        return subprocess.run(
+            [
+                sys.executable,
+                str(TOOL_SCRIPT),
+                "--repo",
+                str(repo),
+                "--work",
+                str(work),
+            ],
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+        )
+
+    def test_installed_wheel_and_declared_dependency(self):
+        source = pathlib.Path(tool_py_lib_ci_test_library.__file__).resolve()
+        self.assertFalse(source.is_relative_to(ROOT))
+        self.assertEqual(tool_py_lib_ci_test_library.VALUE, "installed-wheel")
+        self.assertTrue(packaging.__version__)
+
+    def test_exact_released_tool_commit(self):
+        self.assertTrue(TOOL_ROOT.is_dir())
+        actual = subprocess.check_output(
+            ["git", "-C", str(TOOL_ROOT), "rev-parse", "HEAD"],
+            text=True,
+        ).strip()
+        self.assertEqual(actual, TOOL_SHA)
+
+        manifest = (ROOT / "dependencies.repos").read_text(encoding="utf-8")
+        self.assertIn(f"tool.py.lib.ci.commit={TOOL_SHA}", manifest)
+
+        workflow = (
+            ROOT / ".github" / "workflows" / "ci.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            f"tool.py.lib.ci/.github/workflows/reusable-ci.yml@{TOOL_SHA}",
+            workflow,
+        )
+
+    def test_released_workflow_has_no_cad_scons_or_github_cache(self):
+        workflow = (
+            TOOL_ROOT / ".github" / "workflows" / "reusable-ci.yml"
+        ).read_text(encoding="utf-8").lower()
+        for value in (
+            "actions/cache",
+            "scons",
+            ".cad-ci",
+            ".cache/cad-ci",
+            "tool.cad.ci",
+            "lib.py.cad.ci",
+        ):
+            with self.subTest(value=value):
+                self.assertNotIn(value, workflow)
+
+    def test_build_failure_is_returned_as_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            broken = root / "broken"
+            broken.mkdir()
+            result = self.run_tool(broken, root / "work")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("ERROR: build:", result.stdout)
+
+    def test_library_test_failure_is_returned_as_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            failing = write_library(
+                root,
+                name="failing-library",
+                failing_test=True,
+            )
+            result = self.run_tool(failing, root / "work")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("ERROR: test:", result.stdout)
+
+    def test_dependency_install_failure_is_returned_as_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            failing = write_library(
+                root,
+                name="missing-dependency-library",
+                dependency="brainboxemb-package-that-does-not-exist-20261119==1.0",
+            )
+            result = self.run_tool(failing, root / "work")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("ERROR: install:", result.stdout)
+
+
+if __name__ == "__main__":
+    unittest.main()

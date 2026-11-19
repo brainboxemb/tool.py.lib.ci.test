@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tool-py-lib-ci-test-library"
+version = "0.1.0"
+description = "Small library used to test tool.py.lib.ci from another repository"
+requires-python = ">=3.12"
+dependencies = ["packaging>=23"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -2,7 +2,7 @@
 
 This file contains only current unfinished work for `tool.py.lib.ci.test`.
 
-## 1. Build the sample library
+## 1. Build the sample library — #3
 
 Add one minimal Python package with:
 
@@ -14,7 +14,7 @@ Add one minimal Python package with:
 
 ## 2. Add the released-tool pin
 
-After `tool.py.lib.ci` 0.1.0 is released:
+For `tool.py.lib.ci` 0.1.1:
 
 - record its exact release commit in one dependency manifest;
 - bootstrap/use only that exact revision.
@@ -52,10 +52,10 @@ Prove the accepted public path uses:
 - no `actions/cache`;
 - no source-tree import leakage.
 
-## 6. Mark 0.1.0 accepted
+## 6. Record the tested 0.1.1 release
 
 When all checks pass:
 
-- document the accepted tool version/commit in README;
+- document the tested tool version/commit in README;
 - remove completed plan sections;
-- notify the first repository repository that the exact release is ready to pin.
+- update the first library repository to the exact tested release.
