@@ -16,7 +16,7 @@ import tool_py_lib_ci_test_library
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-TOOL_SHA = "81461fa4b61c90b91b0427ce3e99a493c2dc2e78"
+TOOL_SHA = "d189d0718659ca3927f1dddbe373c1c788b11b6c"
 TOOL_ROOT = ROOT / ".tool-py-lib-ci"
 TOOL_SCRIPT = TOOL_ROOT / "scripts" / "library_ci.py"
 CHANGE_SCOPE_SCRIPT = TOOL_ROOT / "scripts" / "change_scope.py"
@@ -170,6 +170,42 @@ class ReleasedToolTests(unittest.TestCase):
             with self.subTest(paths=paths):
                 self.assertEqual(classifier.classify_paths(paths), "full")
 
+    def test_released_push_comparison_fails_safe(self):
+        classifier = load_change_scope()
+        sha_a = "a" * 40
+        sha_b = "b" * 40
+        zero = "0" * 40
+
+        self.assertEqual(
+            classifier.comparison_base(
+                event_name="pull_request",
+                source_sha_input="",
+                pull_base_sha=sha_a,
+                push_before_sha="",
+                push_forced=False,
+            ),
+            sha_a,
+        )
+        self.assertEqual(
+            classifier.comparison_base(
+                event_name="push",
+                source_sha_input="",
+                pull_base_sha="",
+                push_before_sha=sha_b,
+                push_forced=False,
+            ),
+            sha_b,
+        )
+
+        for values in (
+            dict(event_name="push", source_sha_input="", pull_base_sha="", push_before_sha=sha_b, push_forced=True),
+            dict(event_name="push", source_sha_input="", pull_base_sha="", push_before_sha=zero, push_forced=False),
+            dict(event_name="push", source_sha_input="override", pull_base_sha="", push_before_sha=sha_b, push_forced=False),
+            dict(event_name="push", source_sha_input="", pull_base_sha="", push_before_sha="invalid", push_forced=False),
+        ):
+            with self.subTest(values=values):
+                self.assertIsNone(classifier.comparison_base(**values))
+
     def test_released_workflow_has_conservative_docs_only_path(self):
         workflow = (
             TOOL_ROOT / ".github" / "workflows" / "reusable-ci.yml"
@@ -177,7 +213,10 @@ class ReleasedToolTests(unittest.TestCase):
         self.assertIn("EVENT_NAME", workflow)
         self.assertIn("SOURCE_SHA_INPUT", workflow)
         self.assertIn("git diff --name-only -z --no-renames", workflow)
-        self.assertIn("scripts/change_scope.py", workflow)
+        self.assertIn("scripts/change_scope.py base", workflow)
+        self.assertIn("scripts/change_scope.py classify", workflow)
+        self.assertIn("PUSH_BEFORE_SHA", workflow)
+        self.assertIn("PUSH_FORCED", workflow)
         self.assertIn(
             "Skip package validation for documentation-only change",
             workflow,
@@ -190,6 +229,9 @@ class ReleasedToolTests(unittest.TestCase):
             "Python library CI skipped build/install/test:",
             workflow,
         )
+        self.assertIn("change_scope:", workflow)
+        self.assertIn("jobs.test.outputs.change_scope", workflow)
+        self.assertIn("steps.scope.outputs.scope", workflow)
 
     def test_released_workflow_has_no_cad_scons_or_github_cache(self):
         workflow = (
