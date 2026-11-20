@@ -118,3 +118,14 @@ leave unsafe or unknown cases on the full path.
 
 A separate real consumer PR must later prove the actual GitHub Actions cheap
 path; this repository does not fabricate caller event state.
+
+
+## 15. Push and workflow-output acceptance
+
+For the released 0.1.5 maintenance contract, external acceptance must prove:
+
+- safe normal push comparison uses the event `before` commit;
+- forced, zero/invalid-before and explicit source override contexts fail safe;
+- the reusable workflow exports `change_scope` as the exact classifier result.
+
+The test repository does not implement consumer release policy with that output.

@@ -85,3 +85,12 @@ For a release that changes change-scope behavior, the external test repository:
 
 The actual documentation-only event path is then proven separately by a real
 pull request in a normal consumer repository.
+
+
+## 9. 0.1.5 maintenance acceptance
+
+The external repository imports `change_scope.py` from the exact pinned
+release and directly tests comparison-base decisions. It also inspects the
+released reusable workflow for the `change_scope` output wiring.
+
+This complements, rather than replaces, the normal full package acceptance run.
