@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from importlib.util import module_from_spec, spec_from_file_location
 import pathlib
 import shutil
 import subprocess
@@ -15,9 +16,21 @@ import tool_py_lib_ci_test_library
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-TOOL_SHA = "801480ad10b31d417ed7843f44608c795032c6d5"
+TOOL_SHA = "81461fa4b61c90b91b0427ce3e99a493c2dc2e78"
 TOOL_ROOT = ROOT / ".tool-py-lib-ci"
 TOOL_SCRIPT = TOOL_ROOT / "scripts" / "library_ci.py"
+CHANGE_SCOPE_SCRIPT = TOOL_ROOT / "scripts" / "change_scope.py"
+
+
+def load_change_scope():
+    """Load the classifier from the exact released tool checkout."""
+
+    spec = spec_from_file_location("released_change_scope", CHANGE_SCOPE_SCRIPT)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"could not load {CHANGE_SCOPE_SCRIPT}")
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def write_library(
@@ -139,6 +152,42 @@ class ReleasedToolTests(unittest.TestCase):
         self.assertIn("github.workflow", workflow)
         self.assertIn(
             "github.event.pull_request.number || github.ref",
+            workflow,
+        )
+
+    def test_released_docs_only_classifier_fails_safe(self):
+        classifier = load_change_scope()
+        self.assertEqual(
+            classifier.classify_paths(["docs/plan.md", "docs/design.md"]),
+            "docs-only",
+        )
+        for paths in (
+            [],
+            ["README.md"],
+            ["docs/plan.md", "src/package.py"],
+            [".github/workflows/ci.yml"],
+        ):
+            with self.subTest(paths=paths):
+                self.assertEqual(classifier.classify_paths(paths), "full")
+
+    def test_released_workflow_has_conservative_docs_only_path(self):
+        workflow = (
+            TOOL_ROOT / ".github" / "workflows" / "reusable-ci.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("EVENT_NAME", workflow)
+        self.assertIn("SOURCE_SHA_INPUT", workflow)
+        self.assertIn("git diff --name-only -z --no-renames", workflow)
+        self.assertIn("scripts/change_scope.py", workflow)
+        self.assertIn(
+            "Skip package validation for documentation-only change",
+            workflow,
+        )
+        self.assertIn(
+            "if: steps.scope.outputs.scope != 'docs-only'",
+            workflow,
+        )
+        self.assertIn(
+            "Python library CI skipped build/install/test:",
             workflow,
         )
 
