@@ -10,6 +10,6 @@ permissions:
 
 jobs:
   library:
-    uses: brainboxemb/tool.py.lib.ci/.github/workflows/reusable-ci.yml@81461fa4b61c90b91b0427ce3e99a493c2dc2e78
+    uses: brainboxemb/tool.py.lib.ci/.github/workflows/reusable-ci.yml@d189d0718659ca3927f1dddbe373c1c788b11b6c
     with:
       python_version: "3.12"
