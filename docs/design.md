@@ -69,3 +69,19 @@ Helpers in this repository may copy files, invoke the pinned released tool and
 inspect outputs.
 
 They must not implement build, install or test semantics themselves.
+
+
+## 8. Documentation-only release acceptance
+
+For a release that changes change-scope behavior, the external test repository:
+
+1. pins the exact released tool commit;
+2. imports the released classifier from the checked-out tool and tests its
+   public observable classifications;
+3. inspects the exact released reusable workflow for caller-event guards and
+   conditional expensive steps;
+4. continues to call the reusable workflow normally so the standard full
+   package path remains externally proven.
+
+The actual documentation-only event path is then proven separately by a real
+pull request in a normal consumer repository.

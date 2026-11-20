@@ -100,3 +100,21 @@ test must inspect the exact released workflow and prove that:
 - the group distinguishes PR/branch context.
 
 The test repository does not implement its own replacement concurrency policy.
+
+
+## 14. Documentation-only CI external proof
+
+When the released tool adds a documentation-only cheap path, external acceptance
+must prove both the classifier and public workflow contract from the exact
+released revision.
+
+The classifier must accept only a non-empty path set entirely below `docs/`.
+Empty, mixed and non-doc path sets must select full package CI.
+
+The released workflow must keep the docs-only optimization restricted to normal
+pull requests without an explicit source override, use rename-safe changed-path
+detection, skip only the expensive Python setup/package-validation steps, and
+leave unsafe or unknown cases on the full path.
+
+A separate real consumer PR must later prove the actual GitHub Actions cheap
+path; this repository does not fabricate caller event state.
