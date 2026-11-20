@@ -86,3 +86,17 @@ steps in the initial accepted version.
 
 A released `tool.py.lib.ci` revision is ready to use only when all external
 test checks pass here.
+
+
+## 13. Superseded-run concurrency proof
+
+When the released tool adds central superseded-run cancellation, the external
+test must inspect the exact released workflow and prove that:
+
+- concurrency is enabled;
+- `cancel-in-progress` is true;
+- the group includes caller repository;
+- the group includes caller workflow;
+- the group distinguishes PR/branch context.
+
+The test repository does not implement its own replacement concurrency policy.

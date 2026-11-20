@@ -50,7 +50,7 @@ The synthetic repository must prove:
 
 This repository currently tests:
 
-- tool.py.lib.ci 0.1.2
-- commit `9045367540102ba2208c517e45a52ddad4bb60ea`
+- tool.py.lib.ci 0.1.3
+- commit `801480ad10b31d417ed7843f44608c795032c6d5`
 
 The workflow uses that exact commit, not a moving branch.

@@ -15,7 +15,7 @@ import tool_py_lib_ci_test_library
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-TOOL_SHA = "9045367540102ba2208c517e45a52ddad4bb60ea"
+TOOL_SHA = "801480ad10b31d417ed7843f44608c795032c6d5"
 TOOL_ROOT = ROOT / ".tool-py-lib-ci"
 TOOL_SCRIPT = TOOL_ROOT / "scripts" / "library_ci.py"
 
@@ -126,6 +126,19 @@ class ReleasedToolTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn(
             f"tool.py.lib.ci/.github/workflows/reusable-ci.yml@{TOOL_SHA}",
+            workflow,
+        )
+
+    def test_released_workflow_cancels_same_caller_scope(self):
+        workflow = (
+            TOOL_ROOT / ".github" / "workflows" / "reusable-ci.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("concurrency:", workflow)
+        self.assertIn("cancel-in-progress: true", workflow)
+        self.assertIn("github.repository", workflow)
+        self.assertIn("github.workflow", workflow)
+        self.assertIn(
+            "github.event.pull_request.number || github.ref",
             workflow,
         )
 
