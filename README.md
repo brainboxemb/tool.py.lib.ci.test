@@ -38,7 +38,8 @@ The synthetic repository must prove:
 - pass/fail propagation;
 - no SCons;
 - no CAD-CI;
-- no GitHub Actions cache.
+- no GitHub Actions cache;
+- conservative documentation-only pull-request classification and skip behavior.
 
 ## Documentation
 
@@ -50,7 +51,7 @@ The synthetic repository must prove:
 
 This repository currently tests:
 
-- tool.py.lib.ci 0.1.3
-- commit `801480ad10b31d417ed7843f44608c795032c6d5`
+- tool.py.lib.ci 0.1.4
+- commit `81461fa4b61c90b91b0427ce3e99a493c2dc2e78`
 
 The workflow uses that exact commit, not a moving branch.
