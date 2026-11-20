@@ -3,33 +3,27 @@
 This file is the current source of truth for unfinished work in
 `tool.py.lib.ci.test`.
 
-## Current status
+## Current goal
 
-The repository has externally tested:
+Complete #10: externally test released `tool.py.lib.ci 0.1.3` at exact commit
+`801480ad10b31d417ed7843f44608c795032c6d5`.
 
-- `tool.py.lib.ci` 0.1.2
-- commit `9045367540102ba2208c517e45a52ddad4bb60ea`
+## Execution order
 
-The test covers wheel build, clean installation, declared dependencies,
-installed-wheel imports, installed console scripts on PATH, failure
-propagation, and the absence of SCons/CAD-CI/`actions/cache`.
+1. Pin the exact 0.1.3 release in the dependency manifest and reusable workflow.
+2. Preserve the complete existing package/build/install/failure-path acceptance.
+3. Add an external contract check for the released concurrency configuration.
+4. Merge only after green PR acceptance.
+5. Verify main acceptance before ordinary Python-library repositories adopt 0.1.3.
 
-There is no active functional test change at this snapshot. The repository
-should remain stable until a new `tool.py.lib.ci` release needs testing.
-
-## Open issue assessment — 2026-11-19
+## Open issue assessment — 2026-11-20
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #7 Make docs/plan.md the repository work source of truth | now | Repository-process housekeeping. Close after this plan/AGENTS update is merged. |
-| #3 Test tool.py.lib.ci 0.1.1 from another repository | effectively complete but still open | PR #4 merged and main external test passed. The repository has since also tested 0.1.2. Close this old 0.1.1 tracking issue after confirming no separate historical requirement remains. |
+| #10 Externally test tool.py.lib.ci 0.1.3 concurrency | now | Required release acceptance before consumer adoption. |
+| #3 Test tool.py.lib.ci 0.1.1 from another repository | effectively complete but still open | Historical 0.1.1 acceptance was completed; the repository subsequently accepted 0.1.2. Close separately after historical review. |
 
-## Next action
+## Boundary
 
-Wait for a new released `tool.py.lib.ci` revision. For each future release:
-
-1. pin the exact release commit;
-2. add only the external check required by the changed public contract;
-3. run the complete existing test suite;
-4. merge only after green external test;
-5. then allow library repositories to adopt that exact revision.
+This repository does not implement concurrency or package-CI behavior. It only
+pins and observes the released tool contract.
