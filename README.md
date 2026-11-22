@@ -40,7 +40,11 @@ The synthetic repository must prove:
 - no CAD-CI;
 - no GitHub Actions cache;
 - conservative documentation-only pull-request and safe push classification;
-- exported `change_scope` for caller-owned downstream policy.
+- exported `change_scope` for caller-owned downstream policy;
+- externally callable reusable release workflow;
+- exact stable-head tag/release publication and issue reporting;
+- repository-owned release validator hook;
+- versioned CI/release consumer templates.
 
 ## Documentation
 
@@ -52,7 +56,7 @@ The synthetic repository must prove:
 
 This repository currently tests:
 
-- tool.py.lib.ci 0.1.5
-- commit `d189d0718659ca3927f1dddbe373c1c788b11b6c`
+- tool.py.lib.ci 0.2.0
+- commit `8d18b3514180641e1756cc14efc4d8696c23e71b`
 
 The workflow uses that exact commit, not a moving branch.

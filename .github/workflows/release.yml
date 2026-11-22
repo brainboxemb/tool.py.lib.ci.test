@@ -1,0 +1,25 @@
+# Acceptance consumer of the released generic Python-library release API.
+
+name: Test released Python library release
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    if: >-
+      !github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '/release ')
+    permissions:
+      contents: write
+      issues: write
+    uses: brainboxemb/tool.py.lib.ci/.github/workflows/reusable-release.yml@8d18b3514180641e1756cc14efc4d8696c23e71b
+    with:
+      command: ${{ github.event.comment.body }}
+      issue_number: ${{ github.event.issue.number }}
+      stable_ref: main
+      validator_path: release_case/validate_release.py

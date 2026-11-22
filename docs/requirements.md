@@ -129,3 +129,27 @@ For the released 0.1.5 maintenance contract, external acceptance must prove:
 - the reusable workflow exports `change_scope` as the exact classifier result.
 
 The test repository does not implement consumer release policy with that output.
+
+
+## 16. Reusable release external proof
+
+For released 0.2.0, external acceptance must prove:
+
+- the exact released `reusable-release.yml` is present and callable;
+- caller context is owner-issued issue comment;
+- the workflow checks out the exact requested source SHA;
+- source checkout does not persist credentials;
+- the optional repository validator runs before publication and receives
+  `--version`, `--target-sha` and `--notes-out`;
+- exact stable-head/tag mismatch fails closed in the released implementation;
+- one real issue-comment release on this repository creates/verifies the exact
+  tag and GitHub Release and reports the release URL back to the issue.
+
+The acceptance repository owns only its validator policy. It does not create
+tags/releases itself.
+
+## 17. Versioned template acceptance
+
+The released tool template manifest and canonical CI/release wrappers must be
+checked from the exact released tool checkout. The test verifies id/version,
+public surface mapping and release-SHA marker count.

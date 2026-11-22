@@ -94,3 +94,27 @@ release and directly tests comparison-base decisions. It also inspects the
 released reusable workflow for the `change_scope` output wiring.
 
 This complements, rather than replaces, the normal full package acceptance run.
+
+
+## 10. Reusable release acceptance
+
+The PR path first proves the exact released source contract without mutating
+repository releases:
+
+```text
+released tool checkout
+  -> inspect reusable-release.yml
+  -> inspect template manifest/wrappers
+  -> run normal package CI
+```
+
+After that PR is merged to `main`, an issue comment on this test repository
+invokes the released reusable release workflow.
+
+The repository-owned validator lives at
+`release_case/validate_release.py`. It checks only the acceptance version and
+exact checked-out target SHA and writes deterministic release notes. It does
+not call GitHub APIs.
+
+The resulting tag/release is a deliberate durable acceptance artifact for the
+tool release version under test.
