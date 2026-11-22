@@ -16,10 +16,12 @@ import tool_py_lib_ci_test_library
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-TOOL_SHA = "d189d0718659ca3927f1dddbe373c1c788b11b6c"
+TOOL_SHA = "8d18b3514180641e1756cc14efc4d8696c23e71b"
 TOOL_ROOT = ROOT / ".tool-py-lib-ci"
 TOOL_SCRIPT = TOOL_ROOT / "scripts" / "library_ci.py"
 CHANGE_SCOPE_SCRIPT = TOOL_ROOT / "scripts" / "change_scope.py"
+RELEASE_WORKFLOW = TOOL_ROOT / ".github" / "workflows" / "reusable-release.yml"
+TEMPLATE_MANIFEST = TOOL_ROOT / "templates" / "manifest.json"
 
 
 def load_change_scope():
@@ -247,6 +249,78 @@ class ReleasedToolTests(unittest.TestCase):
         ):
             with self.subTest(value=value):
                 self.assertNotIn(value, workflow)
+
+    def test_released_release_workflow_and_templates(self):
+        release = RELEASE_WORKFLOW.read_text(encoding="utf-8")
+        for value in (
+            "workflow_call:",
+            "Validate caller release context",
+            "Checkout exact requested library source",
+            "Run repository release validator",
+            "Publish or verify exact GitHub release",
+            "Record release on triggering issue",
+            "scripts/release_command.py",
+            "persist-credentials: false",
+        ):
+            with self.subTest(value=value):
+                self.assertIn(value, release)
+
+        import json
+        manifest = json.loads(TEMPLATE_MANIFEST.read_text(encoding="utf-8"))
+        self.assertEqual(manifest.get("schema"), 1)
+        self.assertEqual(
+            manifest.get("templates"),
+            {
+                "github/workflows/ci.yml": {
+                    "id": "tool.py.lib.ci/ci",
+                    "version": 1,
+                    "surface": "reusable-ci.yml",
+                },
+                "github/workflows/release.yml": {
+                    "id": "tool.py.lib.ci/release",
+                    "version": 1,
+                    "surface": "reusable-release.yml",
+                },
+            },
+        )
+
+        for relative, entry in manifest["templates"].items():
+            template = (TOOL_ROOT / "templates" / relative).read_text(
+                encoding="utf-8"
+            )
+            self.assertIn(f"# template: {entry['id']}", template)
+            self.assertIn(
+                f"# template-version: {entry['version']}",
+                template,
+            )
+            self.assertEqual(
+                template.count("TOOL_PY_LIB_CI_RELEASE_SHA"),
+                2,
+            )
+
+    def test_acceptance_release_wrapper_is_thin_and_exactly_pinned(self):
+        wrapper = (
+            ROOT / ".github" / "workflows" / "release.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "brainboxemb/tool.py.lib.ci/.github/workflows/"
+            f"reusable-release.yml@{TOOL_SHA}",
+            wrapper,
+        )
+        self.assertIn(
+            "validator_path: release_case/validate_release.py",
+            wrapper,
+        )
+        for forbidden in (
+            "actions/checkout@",
+            "gh api",
+            "git tag",
+            "git push",
+            "publish_release.py",
+            "release_command.py",
+        ):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, wrapper)
 
     def test_build_failure_is_returned_as_failure(self):
         with tempfile.TemporaryDirectory() as tmp:
