@@ -16,7 +16,7 @@ import tool_py_lib_ci_test_library
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-TOOL_SHA = "8d18b3514180641e1756cc14efc4d8696c23e71b"
+TOOL_SHA = "58ead6897a4ac8cafef22a3c1f834491bf61568d"
 TOOL_ROOT = ROOT / ".tool-py-lib-ci"
 TOOL_SCRIPT = TOOL_ROOT / "scripts" / "library_ci.py"
 CHANGE_SCOPE_SCRIPT = TOOL_ROOT / "scripts" / "change_scope.py"
