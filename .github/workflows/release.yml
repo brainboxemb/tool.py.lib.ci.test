@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: write
       issues: write
-    uses: brainboxemb/tool.py.lib.ci/.github/workflows/reusable-release.yml@8d18b3514180641e1756cc14efc4d8696c23e71b
+    uses: brainboxemb/tool.py.lib.ci/.github/workflows/reusable-release.yml@58ead6897a4ac8cafef22a3c1f834491bf61568d
     with:
       command: ${{ github.event.comment.body }}
       issue_number: ${{ github.event.issue.number }}
