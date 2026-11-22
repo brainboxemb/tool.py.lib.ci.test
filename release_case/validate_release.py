@@ -14,7 +14,7 @@ def main() -> int:
     parser.add_argument("--notes-out", type=Path, required=True)
     args = parser.parse_args()
 
-    if args.version != "0.2.0":
+    if args.version != "0.2.1":
         raise SystemExit(f"unexpected acceptance release version: {args.version}")
 
     head = subprocess.check_output(
@@ -27,7 +27,7 @@ def main() -> int:
         )
 
     args.notes_out.write_text(
-        "tool.py.lib.ci 0.2.0 external reusable-release acceptance\n",
+        "tool.py.lib.ci 0.2.1 external reusable-release acceptance\n",
         encoding="utf-8",
     )
     print(f"validated external release {args.version} at {args.target_sha}")
