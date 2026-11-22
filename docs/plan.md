@@ -5,32 +5,32 @@ This file is the current source of truth for unfinished work in
 
 ## Accepted baseline
 
-- currently accepted: `tool.py.lib.ci 0.1.5`;
-- candidate under issue #17: `tool.py.lib.ci 0.2.0` @
-  `8d18b3514180641e1756cc14efc4d8696c23e71b`.
+- live reusable-release 0.2.0 acceptance is complete;
+- candidate under issue #19: `tool.py.lib.ci 0.2.1` @
+  `58ead6897a4ac8cafef22a3c1f834491bf61568d`.
 
 ## Current work
 
-### #17 — accept reusable release workflow 0.2.0
+### #19 — accept annotated release tags in 0.2.1
 
-1. pin package CI and local released-tool checks to 0.2.0;
-2. verify released reusable release workflow and versioned templates;
-3. merge only after the normal package-CI acceptance is green;
-4. create one acceptance issue on `main`;
-5. issue owner command `/release v0.2.0 <main-sha>`;
-6. verify validator notes, exact tag/target, GitHub Release and issue comment;
-7. close #17 only after that live publication succeeds;
-8. only then allow Forge to replace its local generic release workflow.
+1. pin package CI, release wrapper and released-tool checks to 0.2.1;
+2. keep normal package-CI acceptance green;
+3. merge the exact acceptance tree to main;
+4. issue owner command `/release v0.2.1 <main-sha>`;
+5. verify `refs/tags/v0.2.1` has object type `tag`;
+6. resolve the annotated tag object to the exact acceptance main commit;
+7. verify validator notes and issue reporting;
+8. close #19 only after live publication succeeds;
+9. then allow Forge to adopt the released generic publisher.
 
 ## Open issue assessment — 2026-11-22
 
 | Issue | Status | Assessment |
 | --- | --- | --- |
-| #17 Accept tool.py.lib.ci 0.2.0 reusable release workflow | **now** | PR contract acceptance followed by real issue-comment release. |
+| #19 Accept tool.py.lib.ci 0.2.1 annotated release tags | **now** | PR acceptance followed by live annotated-tag release. |
 | #16 Align historical changelog with shared meta template and guidance | **later / docs-only** | No behavior impact. |
 
 ## Boundary
 
-This repository observes the released behavior. It owns only the synthetic
-package and repository-specific acceptance validator. Generic CI/release
-implementation stays in `tool.py.lib.ci`.
+This repository observes released behavior only. Generic tag/release code stays
+in `tool.py.lib.ci`.
